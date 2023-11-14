@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>eurcka_Server</module>
-        <module>orderService</module>
+        <module>order_Service</module>
         <module>userService</module>
     </modules>
 
