@@ -10,6 +10,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.example.client.UserClient;
 import org.example.dao.mapper.OrderMapper;
 import org.example.dao.pojo.Order;
 import org.example.dao.pojo.User;
@@ -28,17 +29,22 @@ import java.util.List;
 public class OrderServiceImp implements OrderService {
     @Autowired
     private OrderMapper orderMapper;
-    @Autowired
+    //@Autowired
     RestTemplate restTemplate;
 
     @Autowired
     private DiscoveryClient discoveryClient; //從註冊中心服務端 拉取 服務訊息的class
+
+    @Autowired
+    private UserClient userClient;
     @Override
     public Order getById(Long id) throws IOException, ParseException {
         Order order=orderMapper.getById(id);
 //        order.setUser(httpGetUser(order.getUserId()));
 //        order.setUser(restGetUser(order.getUserId()));
-        order.setUser(discoveryGetUser(order.getUserId()));
+//        order.setUser(discoveryGetUser(order.getUserId()));
+//        order.setUser(discoveryGetUserLoadBalanced(order.getUserId()));
+        order.setUser(openFenginGetUser(order.getUserId()));
         return  order ;
     }
     /**
@@ -84,5 +90,23 @@ public class OrderServiceImp implements OrderService {
         String url ="http://"+host+":"+port+"/user/"+userId;
         User user =restTemplate.getForObject(url, User.class);//發請求並轉json
         return  user;
+    }
+    /**
+     *方式四 使用discovery+restTemplete＋loadBalanced實現遠程調用
+     * */
+    private  User discoveryGetUserLoadBalanced(Long userId){
+        //服務名
+        String url ="http://USER-SERVICE"+"/user/"+userId;
+        User user =restTemplate.getForObject(url, User.class);//發請求並轉json
+        return  user;
+
+    }
+    /**
+     * openFeign 遠程調用
+     * */
+
+    private  User openFenginGetUser(Long userId){
+       User user = userClient.findById(userId);
+       return  user;
     }
 }

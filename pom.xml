@@ -12,6 +12,7 @@
         <module>eurcka_Server</module>
         <module>order_Service</module>
         <module>userService</module>
+        <module>get-way-server</module>
     </modules>
 
     <parent>
