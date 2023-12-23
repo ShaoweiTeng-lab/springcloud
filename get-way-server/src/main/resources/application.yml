@@ -1,6 +1,10 @@
 server:
   port: 10010
-
+#向eureka 註冊
+eureka:
+  client:
+    service-url:
+      defaultZone: http://Jason:123321@localhost:8761/springCloudEuraka/eureka
 
 # 服務名
 spring:
@@ -10,7 +14,8 @@ spring:
     gateway:
       routes:
         - id: user #唯一id
-          uri: http://localhost:9101
+#          uri: http://localhost:9101
+          uri: lb://USER-SERVICE #附載均衡 lb://底層採用ribbon
           predicates:
             - RbacAuth=rbac
 #            - Path=/user/**

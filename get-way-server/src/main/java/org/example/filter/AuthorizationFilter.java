@@ -1,5 +1,6 @@
 package org.example.filter;
 
+import org.example.exceptionHandler.UnAuthorizationException;
 import org.junit.jupiter.api.Order;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -25,10 +26,12 @@ public class AuthorizationFilter implements GlobalFilter {
         //請求頭獲取
         String authorization =request.getHeaders().getFirst("Authorization");
         if(authorization.isEmpty() || !authorization.equals("admin")){
-            //返回401
-            response.setStatusCode(HttpStatus.UNAUTHORIZED);
-            //終結請求
-            return response.setComplete();
+//            //返回401
+//            response.setStatusCode(HttpStatus.UNAUTHORIZED);
+//            //終結請求
+//            return response.setComplete();
+            //返回自訂格式
+            throw new UnAuthorizationException(401,"權限不足");
         }
         //放行並轉發
         return chain.filter(exchange);
